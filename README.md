@@ -2,7 +2,7 @@
 
 **A cozy management game about a neighbourhood repair shop in a throwaway age.** Diagnose broken kettles, lamps, toasters, radios, bikes, consoles, phones and sewing machines; quote against replacement; order parts on lead times; train apprentices; build reputation street by street. Stay small and beloved, or become FixEmpire.
 
-Free on Google Play (the first in-game year, complete) with a one-time $4.99 unlock for years two and three. No ads, no consumables, fully offline.
+A paid download on Google Play: the whole three-year campaign, with no in-app purchases. No ads, no consumables, fully offline.
 
 Status: **v1.0.0 draft built 2026-11-03**, not submitted. Brief and living log in [HANDOFF.md](HANDOFF.md); plan and verification in [tasks/todo.md](tasks/todo.md). Name and repo rename are Tj's call.
 
@@ -22,7 +22,6 @@ No build step, no runtime dependencies.
 | `js/data.js` | All content tables: parts, categories and faults, suppliers, roles, blocks, story arcs, endings. |
 | `js/engine.js` | Pure, deterministic (seeded) economy engine. Runs in Node and the browser. Includes the save sanitizer and the diagnosability validator. |
 | `js/game.js` | UI, save, turn flow, test API (`window.__repairshop`). |
-| `js/billing.js` | Google Play Billing via the Digital Goods API (`full_unlock`). |
 | `sim/sim.js` | Headless auto-player: `node sim/sim.js all 7 20` plays 20 campaigns per strategy and reports endings, cash and reputation. |
 | `tests/engine.test.js`, `tests/smoke.js` | Engine unit tests and a Playwright smoke test of the real page over `file://`. |
 | `tools/make-icons.js` | Icons and staged store screenshot via Chromium. |
@@ -31,7 +30,7 @@ No build step, no runtime dependencies.
 node tests/engine.test.js && node sim/sim.js all 7 20 && npm install && node tests/smoke.js
 ```
 
-Test API: `seed({week, cash, rep})`, `forceJob(cat, fault)`, `forceBeat(arc, beat)`, `endWeek()`, `unlock()`, `finish(id)`, `reset()`; `?dev=1` makes the unlock free in test builds.
+Test API: `seed({week, cash, rep})`, `forceJob(cat, fault)`, `forceBeat(arc, beat)`, `endWeek()`, `finish(id)`, `reset()`.
 
 Saves: `localStorage` key `mended.v1`, every field sanitized and clamped on load; an unreadable save is copied to `mended.v1.backup` and the game starts fresh.
 
@@ -46,4 +45,4 @@ Saves: `localStorage` key `mended.v1`, every field sanitized and clamped on load
 Known: late-campaign cash snowballs; endings other than "beloved" need more pull. Both are week-6 balance items.
 
 ## Publishing
-Ships as a Trusted Web Activity (Ironhold pattern); the Android project is not in this repo yet. Pages deploys from `main` via `.github/workflows/pages.yml` once Pages is enabled for the repo. Store copy draft in `store/listing.md`.
+A paid app on Google Play with the whole game packed inside it (`android/play`, see `PLAY.md`). Pages deploys only the store page from `main` (`site/index.html`, the privacy policy `privacy.html` and the store graphics), not the playable game. Store copy: `store/listing.md`.

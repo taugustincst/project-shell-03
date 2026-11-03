@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mended: Repair Shop</title>
+  <meta name="description" content="Run your own repair shop. Diagnose, quote, order parts, and build a street&#x27;s trust.">
+  <meta name="theme-color" content="#1b1a17">
+  <link rel="icon" href="img/icon-192.png">
+  <meta property="og:title" content="Mended: Repair Shop">
+  <meta property="og:description" content="Run your own repair shop. Diagnose, quote, order parts, and build a street&#x27;s trust.">
+  <meta property="og:image" content="img/feature-graphic-1024x500.png">
+  <style>
+    :root { --bg: #1b1a17; --fg: #f4efe6; --muted: #c9c1b4; --panel: rgba(255,255,255,0.06); }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg);
+      font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+    .hero img { display: block; width: 100%; height: auto; border-radius: 12px; }
+    header { display: flex; gap: 16px; align-items: center; margin: 24px 0 8px; }
+    header img { width: 72px; height: 72px; border-radius: 16px; }
+    h1 { margin: 0; font-size: 1.8rem; line-height: 1.2; }
+    .short { margin: 4px 0 0; color: var(--muted); }
+    .get { display: inline-block; margin: 20px 0 8px; padding: 12px 22px; border-radius: 999px;
+      background: var(--fg); color: var(--bg); font-weight: 600; text-decoration: none; }
+    .get:focus-visible, .get:hover { outline: 3px solid var(--muted); outline-offset: 2px; }
+    .note { margin: 0 0 24px; color: var(--muted); font-size: 0.9rem; }
+    .shots { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 220px);
+      gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; }
+    figure { margin: 0; scroll-snap-align: start; }
+    figure img { display: block; width: 100%; height: auto; border-radius: 10px; }
+    figcaption { margin-top: 6px; font-size: 0.85rem; color: var(--muted); }
+    .about { margin-top: 28px; padding: 4px 20px; border-radius: 12px; background: var(--panel); }
+    footer { margin-top: 32px; font-size: 0.9rem; color: var(--muted); }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="hero"><img src="img/feature-graphic-1024x500.png" alt="" width="1024" height="500"></div>
+    <header>
+      <img src="img/icon-192.png" alt="" width="72" height="72">
+      <div>
+        <h1>Mended: Repair Shop</h1>
+        <p class="short">Run your own repair shop. Diagnose, quote, order parts, and build a street&#x27;s trust.</p>
+      </div>
+    </header>
+    <a class="get" href="https://play.google.com/store/apps/details?id=com.taugustincst.mended">Get it on Google Play</a>
+    <p class="note">Mended: Repair Shop is played in the Android app.</p>
+    <section class="shots" aria-label="Screenshots">
+        <figure><img src="img/screenshot-01-diagnose.png" alt="Diagnose: choose the tests, name the fault" loading="lazy" width="540" height="1170"><figcaption>Diagnose: choose the tests, name the fault</figcaption></figure>
+        <figure><img src="img/screenshot-02-staff.png" alt="8 trades · 79 faults · 3 suppliers" loading="lazy" width="540" height="1170"><figcaption>8 trades · 79 faults · 3 suppliers</figcaption></figure>
+        <figure><img src="img/screenshot-03-ledger.png" alt="Quote against replacement, build a street&#x27;s trust" loading="lazy" width="540" height="1170"><figcaption>Quote against replacement, build a street's trust</figcaption></figure>
+        <figure><img src="img/screenshot-04-story.png" alt="Three years, thirteen story customers, two endings" loading="lazy" width="540" height="1170"><figcaption>Three years, thirteen story customers, two endings</figcaption></figure>
+    </section>
+    <section class="about">
+      <p><strong>Run your own repair shop.</strong> You inherit a one-bench repair café on Hollow Lane in a throwaway age. Every kettle, radio, bike, console, phone and sewing machine that comes through the door is a small vote against the landfill.</p>
+      <p><strong>Diagnose, don't guess.</strong> Customers describe the symptom. You choose the tests, read the results, and name the fault. A wrong call wastes the parts and the hours. 8 trades, 79 faults, each one a short deduction.</p>
+      <p><strong>Quote against the alternative.</strong> Every customer knows what a new one costs and how much they care about this one. Price fairly, promise honestly, and the street remembers.</p>
+      <p><strong>Grow bench by bench.</strong> Three suppliers with different lead times. Four kinds of staff who learn on the job. Five street blocks, each with its own reputation. Thirteen story customers whose lives thread through three years.</p>
+      <p><strong>Then decide what you became.</strong> The beloved shop on Hollow Lane, or FixEmpire. Then keep going in endless mode.</p>
+      <ul><li>No ads. No timers. No accounts. No consumables. Fully offline.</li><li>Turn-based: a week at a time, as long or short as you like.</li><li>Portrait, one-handed, large-text and high-contrast options.</li><li>The whole three-year campaign, every street and both endings, plus endless mode.</li></ul>
+    </section>
+    <footer>
+      <a href="privacy.html">Privacy policy</a>
+    </footer>
+  </main>
+  <script>
+    // Earlier versions of this site installed the game for offline play.
+    // Registering sw.js again replaces that copy with one that clears it.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        if (regs.length) navigator.serviceWorker.register('sw.js').catch(function () {});
+      }).catch(function () {});
+    }
+  </script>
+</body>
+</html>

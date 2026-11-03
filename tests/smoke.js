@@ -29,20 +29,19 @@ const T = (p, fn, arg) => p.evaluate(fn, arg);
   await T(p, () => window.__repairshop.forceBeat('okafor', 0)); await p.waitForSelector('#modal-story:not([hidden])');
   check('a story beat opens with choices', (await p.locator('#story-choices .choice').count()) >= 1); await p.click('#story-choices .choice'); await p.waitForTimeout(100);
   check('choosing records a flag and a story log line', await T(p, () => { const s = window.__repairshop.state; return !s.pending && s.flags.okafor_job === true && s.log.some(l => l.k === 'story' && l.t.includes('Okafor')); }));
-  // gate
-  await T(p, () => { const K = window.__repairshop; K.seed({ week: 52 }); K.state.jobs = []; K.endWeek(); }); await p.waitForTimeout(100); if (await p.isVisible('#modal-week')) await p.click('#btn-week-ok');
-  await p.waitForSelector('#modal-gate:not([hidden])'); check('the free year stops at week 52 with the unlock sheet', await T(p, () => window.__repairshop.state.gated));
-  await p.click('#btn-gate-later'); await p.click('.tab[data-tab="story"]'); await p.click('#btn-unlock'); await p.waitForTimeout(150);
-  check('without Play Billing the unlock explains itself and stays locked', await T(p, () => !window.__repairshop.state.unlocked && !document.getElementById('toast').hidden));
-  await T(p, () => window.__repairshop.unlock()); check('unlock reopens the calendar', await T(p, () => window.__repairshop.state.unlocked && !window.__repairshop.state.gated));
+  // no gate: the whole campaign is open
+  await T(p, () => { const K = window.__repairshop; K.seed({ week: 52 }); K.state.jobs = []; K.state.pending = null; K.endWeek(); }); await p.waitForTimeout(100); if (await p.isVisible('#modal-week')) await p.click('#btn-week-ok');
+  check('week 52 rolls straight into year two with no gate', await T(p, () => { const s = window.__repairshop.state; return s.week === 53 && s.unlocked === true && !s.gated && !document.getElementById('modal-gate'); }));
+  if (await p.isVisible('#modal-story')) { await p.click('#story-choices .choice'); await p.waitForTimeout(100); }
+  check('there is no unlock or restore button and no purchase wording', await T(p, () => !document.getElementById('btn-unlock') && !document.getElementById('btn-restore') && [...document.scripts].map(x => x.getAttribute('src')).join() === 'js/data.js,js/engine.js,js/game.js' && !/unlock years|restore purchase|free part|google play version/i.test(document.body.textContent)));
   // save round trip
   const before = await T(p, () => { const K = window.__repairshop; K.save(); return [K.state.week, Math.round(K.state.cash), K.state.flags.okafor_job]; });
   await p.reload(); await p.waitForSelector('#app:not([hidden])');
   const after = await T(p, () => { const K = window.__repairshop; return [K.state.week, Math.round(K.state.cash), K.state.flags.okafor_job, K.state.unlocked]; });
-  check('the save restores week, cash, flags and the unlock', before[0] === after[0] && before[1] === after[1] && after[2] === true && after[3] === true, JSON.stringify(after));
-  for (const [label, junk] of [['truncated JSON', '{"run":{"week":"zzz","cash":"1e999"},"meta":{"unlocked":"yes"}'], ['wrong types', '{"v":1,"run":{"week":-3,"cash":"x","jobs":"no","staff":[null],"rep":5},"meta":{"unlocked":1}}'], ['not an object', '42']]) {
+  check('the save restores week, cash, flags and the open campaign', before[0] === after[0] && before[1] === after[1] && after[2] === true && after[3] === true, JSON.stringify(after));
+  for (const [label, junk] of [['truncated JSON', '{"run":{"week":"zzz","cash":"1e999"},"meta":{"unlocked":"yes"}'], ['wrong types', '{"v":1,"run":{"week":-3,"cash":"x","jobs":"no","staff":[null],"rep":5},"meta":{"unlocked":1}}'], ['not an object', '42'], ['an old save stopped at week 52', '{"v":1,"run":{"week":52,"cash":800,"unlocked":false,"gated":true},"meta":{"unlocked":false}}']]) {
     const ctx = await b.newContext({ viewport: { width: 360, height: 640 } }); const q = await ctx.newPage(); const qe = []; q.on('pageerror', e => qe.push(e.message)); await q.addInitScript(j => { try { localStorage.setItem('mended.v1', j); } catch (e) { } }, junk); await q.goto(base); await q.waitForSelector('#app:not([hidden])');
-    check('a mangled save still loads: ' + label, qe.length === 0 && await T(q, () => { const s = window.__repairshop.state; return s.week >= 1 && isFinite(s.cash) && s.unlocked === false && s.staff.length >= 1; }), qe.join(' | ')); await ctx.close();
+    check('a mangled save still loads: ' + label, qe.length === 0 && await T(q, () => { const s = window.__repairshop.state; return s.week >= 1 && isFinite(s.cash) && s.unlocked === true && !s.gated && s.staff.length >= 1 && document.getElementById('modal-gate') === null; }), qe.join(' | ')); await ctx.close();
   }
   // ending
   await T(p, () => { const K = window.__repairshop; K.seed({ week: 156, rep: 80 }); K.state.jobs = []; K.state.pending = null; K.endWeek(); }); await p.waitForTimeout(100); if (await p.isVisible('#modal-week')) await p.click('#btn-week-ok');
