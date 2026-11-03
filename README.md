@@ -1,9 +1,9 @@
-# project-shell-03
+# Repair-Shop Tycoon
 
-**Shell repository for a future Claude project.**
+**A cozy management game about a neighbourhood repair café in a throwaway age.** Diagnose broken radios, bikes, kettles and consoles, order parts, price the fix against replacement, train apprentices, and build a reputation street by street. Stay small and beloved — or become FixEmpire.
 
-This repo is an empty shell created on 2026-10-28 at Tj's direction. It has no project yet — it exists so that when a project is assigned, the repo, its conventions, and its handoff are already in place.
+Free on Google Play (first in-game year) with a one-time $4.99 unlock. No ads, no consumables, fully offline.
 
-Start with [HANDOFF.md](HANDOFF.md): it explains what this shell is, who works here, and how the project gets defined.
+Status: ASSIGNED 2026-11-02 — build brief is in [HANDOFF.md](HANDOFF.md). Repo rename at ship time (Tj's call).
 
 Owner: Tj (Taylor Augustin) / AugustInnovations LLC.
