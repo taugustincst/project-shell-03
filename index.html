@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b1a17">
+<meta name="description" content="Mended: run a neighbourhood repair shop. Diagnose, quote, order parts, train apprentices, and decide what you become.">
+<title>Mended</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app" class="app" hidden>
+  <header class="top">
+    <div><h1>Mended</h1><div class="sub" id="hdr-week">Week 1 · Year 1</div></div>
+    <div class="hdr-stats"><div class="hs"><span>Cash</span><b id="hdr-cash">£1,500</b></div><div class="hs"><span>Rep</span><b id="hdr-rep">25</b></div><div class="hs"><span>Diag hrs</span><b id="hdr-hours">40</b></div></div>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="counter">Counter <span class="badge" id="badge-counter" hidden></span></button>
+    <button class="tab" data-tab="bench">Bench <span class="badge" id="badge-bench" hidden></span></button>
+    <button class="tab" data-tab="parts">Parts <span class="badge warn" id="badge-parts" hidden></span></button>
+    <button class="tab" data-tab="shop">Shop</button>
+    <button class="tab" data-tab="story">Story <span class="badge" id="badge-story" hidden></span></button>
+  </nav>
+  <main class="panels">
+    <section id="tab-counter" class="panel active"><div id="counter"></div></section>
+    <section id="tab-bench" class="panel"><div id="bench"></div></section>
+    <section id="tab-parts" class="panel"><div id="parts"></div></section>
+    <section id="tab-shop" class="panel"><div id="shop"></div></section>
+    <section id="tab-story" class="panel">
+      <div id="story-stats" class="stats"></div>
+      <ol id="log" class="log"></ol>
+      <div class="card">
+        <h2>Settings</h2>
+        <label class="row"><input type="checkbox" id="opt-large"> Large text</label>
+        <label class="row"><input type="checkbox" id="opt-contrast"> High contrast</label>
+        <div class="row-btns"><button class="btn" id="btn-unlock">Unlock years 2–3</button><button class="btn" id="btn-restore">Restore purchase</button><button class="btn danger" id="btn-reset">Start again</button></div>
+        <p class="muted small">Progress is saved on this device. Nothing leaves it. <a href="privacy.html">Privacy</a> · © AugustInnovations LLC · v<span id="ver">1.0.0</span></p>
+      </div>
+    </section>
+  </main>
+  <footer class="foot"><div class="foot-info" id="foot-info"></div><button class="btn primary big" id="btn-endweek">End the week</button></footer>
+</div>
+
+<div class="modal" id="modal-story" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="sheet-date" id="story-date"></div><h2 id="story-title"></h2><p id="story-text"></p><div class="choices" id="story-choices"></div></div></div>
+<div class="modal" id="modal-week" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="sheet-date" id="week-date"></div><h2>The week's ledger</h2><div id="week-body"></div><button class="btn primary" id="btn-week-ok">Open up</button></div></div>
+<div class="modal" id="modal-gate" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="sheet-date">End of year one</div><h2>The shop made it through a year</h2><p>Twelve months, one street, every story arc so far. This is where the free part of the game ends. The counter stays open while you decide.</p><p class="muted">The unlock: years two and three, every street block, the ending choice, and endless mode.</p><div class="row-btns"><button class="btn primary" id="btn-gate-unlock">Unlock years 2–3</button><button class="btn" id="btn-gate-restore">Restore purchase</button><button class="btn" id="btn-gate-later">Keep the counter open</button></div><p class="muted small" id="gate-note"></p></div></div>
+<div class="modal" id="modal-ending" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="sheet-date" id="ending-date">Week 156</div><h2 id="ending-title">What did you become?</h2><p id="ending-text"></p><div id="ending-choices" class="choices"></div><div id="ending-stats" class="stats"></div><div class="row-btns" id="ending-after" hidden><button class="btn primary" id="btn-endless">Keep the shop open (endless)</button><button class="btn" id="btn-newgame">Start a new shop</button></div></div></div>
+<div id="toast" class="toast" hidden></div>
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/billing.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
