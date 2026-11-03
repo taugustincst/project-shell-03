@@ -1,10 +1,12 @@
 /* Mended — UI, save, turn flow. The numbers live in engine.js. */
 (function () {
 'use strict';
-const E = window.REPAIR, D = E.D, B = window.KTL_BILLING;
+const E = window.REPAIR, D = E.D, B = window.REPAIR_BILLING;
 const VERSION = '1.0.0', SAVE_KEY = 'mended.v1', BACKUP_KEY = 'mended.v1.backup';
 const $ = id => document.getElementById(id);
-const DEV = new URLSearchParams(location.search).get('dev') === '1';
+// ?dev=1 makes unlocking free for testing. Only on a local copy: the Play app opens the public site, and
+// the free unlock would otherwise be one link away for anyone and saved on their phone.
+const DEV = new URLSearchParams(location.search).get('dev') === '1' && ['localhost', '127.0.0.1', ''].includes(location.hostname);
 let S = null, profile = null, tab = 'counter', lastLog = 0, unread = 0;
 
 function load() {

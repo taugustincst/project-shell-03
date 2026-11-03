@@ -31,5 +31,6 @@ Run your own repair shop. Diagnose, quote, order parts, and build a street's tru
 4. Three years, thirteen story customers, two endings
 
 ## Category: Game · Simulation. Tags: tycoon, management, repair, cozy, offline.
-## Declarations: IARC (no violence, no gambling, one non-consumable IAP); audience 13+; data safety none collected/shared; privacy.html on Pages; contact elderon@augustinnovations.io.
+## Declarations: IARC (no violence, no gambling, one non-consumable IAP); audience 13+; data safety: see the Data safety line below; privacy.html on Pages; contact elderon@augustinnovations.io.
 ## In-app product: `full_unlock`, non-consumable, $4.99, "Years two and three": every street, the ending choice, endless mode.
+- Data safety (Play edition): collects one data type, shares nothing. Financial info > Purchase history: collected yes, shared no, processed ephemerally yes, required, purpose App functionality. After a purchase the game sends the package name, product ID and Play purchase token over HTTPS to the acknowledgement service (the one in the fftremake repository's ack-endpoint folder), which checks it with Google Play and acknowledges it; nothing is kept on the server. Encrypted in transit: yes. Deletion: nothing is kept on the server; progress is removed by uninstalling or clearing the app's data.
