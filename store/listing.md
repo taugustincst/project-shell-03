@@ -22,7 +22,7 @@ Run your own repair shop. Diagnose, quote, order parts, and build a street's tru
 - No ads. No timers. No accounts. No consumables. Fully offline.
 - Turn-based: a week at a time, as long or short as you like.
 - Portrait, one-handed, large-text and high-contrast options.
-- The first year is free and complete. One optional purchase opens years two and three.
+- The whole three-year campaign, every street and both endings, plus endless mode.
 
 ## Screenshot captions
 1. Diagnose: choose the tests, name the fault
@@ -31,5 +31,6 @@ Run your own repair shop. Diagnose, quote, order parts, and build a street's tru
 4. Three years, thirteen story customers, two endings
 
 ## Category: Game · Simulation. Tags: tycoon, management, repair, cozy, offline.
-## Declarations: IARC (no violence, no gambling, one non-consumable IAP); audience 13+; data safety none collected/shared; privacy.html on Pages; contact elderon@augustinnovations.io.
-## In-app product: `full_unlock`, non-consumable, $4.99, "Years two and three": every street, the ending choice, endless mode.
+## Declarations: IARC (no violence, no gambling, in-app purchases: no); audience 13+; data safety: see the Data safety line below; privacy.html on Pages; contact elderon@augustinnovations.io.
+- Price: paid download, suggested $4.99 (set in Play Console)
+- Data safety: no data collected, no data shared, no network access; progress stays on the device.

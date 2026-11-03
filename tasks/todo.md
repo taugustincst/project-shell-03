@@ -14,13 +14,13 @@
 - [x] Vanilla HTML/CSS/JS, no build step, fully offline, no network/analytics/ads/accounts
 - [x] Economy sim harness (`sim/sim.js`) with four strategies, reports endings and curves
 - [x] Versioned, sanitized, fail-soft localStorage save (`mended.v1`, backup on parse failure)
-- [x] `window.__repairshop` test API (seed week/cash/rep, force job, force beat, end week, unlock, finish)
+- [x] `window.__repairshop` test API (seed week/cash/rep, force job, force beat, end week, finish)
 - [x] Portrait-first, one-handed, large-text and high-contrast options, meaning never in colour alone, no twitch
 - [x] Under 4 MB (≈ 150 KB plus icons)
 
 ## Monetization (HANDOFF §3)
-- [x] Free year one complete; gate at week 52 (soft: counter stays open); `full_unlock` via Digital Goods API; restore purchases
-- [x] Nothing else sold; no ads
+- [x] Paid download (2026-11-03): the whole campaign is open from week 1; the year-one gate, Play Billing and restore were removed
+- [x] Nothing sold inside the game; no ads
 
 ## Tests and verification
 - [x] Engine unit tests: 12 passing (`node tests/engine.test.js`)

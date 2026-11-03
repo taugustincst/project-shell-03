@@ -1,20 +1,18 @@
 /* Mended — UI, save, turn flow. The numbers live in engine.js. */
 (function () {
 'use strict';
-const E = window.REPAIR, D = E.D, B = window.KTL_BILLING;
+const E = window.REPAIR, D = E.D;
 const VERSION = '1.0.0', SAVE_KEY = 'mended.v1', BACKUP_KEY = 'mended.v1.backup';
 const $ = id => document.getElementById(id);
-const DEV = new URLSearchParams(location.search).get('dev') === '1';
 let S = null, profile = null, tab = 'counter', lastLog = 0, unread = 0;
 
 function load() {
   let raw = null;
   try { raw = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { try { localStorage.setItem(BACKUP_KEY, localStorage.getItem(SAVE_KEY) || ''); } catch (e2) { } }
-  profile = { unlocked: !!(raw && raw.meta && raw.meta.unlocked === true), large: !!(raw && raw.settings && raw.settings.large), contrast: !!(raw && raw.settings && raw.settings.contrast) };
-  S = raw && raw.run ? E.sanitize(raw.run) : null; if (!S) S = E.newState({ unlocked: profile.unlocked });
-  if (profile.unlocked) { S.unlocked = true; S.gated = false; }
+  profile = { large: !!(raw && raw.settings && raw.settings.large), contrast: !!(raw && raw.settings && raw.settings.contrast) };
+  S = raw && raw.run ? E.sanitize(raw.run) : null; if (!S) S = E.newState();
 }
-function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, run: S, meta: { unlocked: profile.unlocked }, settings: { large: profile.large, contrast: profile.contrast } })); } catch (e) { } }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, run: S, settings: { large: profile.large, contrast: profile.contrast } })); } catch (e) { } }
 const money = n => (n < 0 ? '−£' : '£') + Math.abs(Math.round(n)).toLocaleString();
 const cat = id => E.catById[id];
 let toastT = 0; function toast(m) { const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2600); }
@@ -33,7 +31,6 @@ function render() {
   $('foot-info').textContent = `${intake} at the counter · ${benchJobs.length} on the bench · ${Math.round(E.backlogHours(S))}h of work, ${Math.round(E.capacityHours(S))}h/week`;
   $('btn-endweek').disabled = !!S.ended || !!S.pending;
   if (tab === 'counter') renderCounter(); if (tab === 'bench') renderBench(); if (tab === 'parts') renderParts(); if (tab === 'shop') renderShop(); if (tab === 'story') renderStory();
-  $('btn-unlock').hidden = S.unlocked;
 }
 function badge(id, n) { const b = $(id); b.hidden = !n; b.textContent = n; }
 function setTab(t) { tab = t; document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t)); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + t)); if (t === 'story') unread = 0; render(); }
@@ -106,7 +103,7 @@ function renderShop() {
   const trades = el(`<div class="card"><h2>Trades</h2><div class="row-btns">${D.CATEGORIES.map(c => S.cats[c.id] ? `<span class="fact good">${c.icon} ${c.name}</span>` : `<button class="btn small" data-cat="${c.id}">${c.icon} Learn ${c.name.toLowerCase()} (${money(c.unlockCost)})</button>`).join('')}</div></div>`);
   trades.querySelectorAll('[data-cat]').forEach(b => { b.onclick = () => { if (E.unlockCat(S, b.dataset.cat)) { save(); render(); } else toast('Not enough cash.'); }; }); box.appendChild(trades);
   const blocks = el(`<div class="card"><h2>Streets</h2></div>`);
-  for (const b of D.BLOCKS) { const open = S.open[b.id]; const adj = Object.keys(S.open).some(o => D.ADJ[o].includes(b.id)); const row = el(`<div class="staff"><div><b>${b.name}</b> <span class="muted small">${b.desc}</span><div class="meter"><i style="width:${S.rep[b.id]}%"></i></div><span class="small">reputation ${Math.round(S.rep[b.id])}${open ? ' · rent ' + money(b.rent) + '/wk' : ' · needs ' + b.needRep}</span></div><div>${open ? '<span class="fact good">open</span>' : adj ? `<button class="btn small" data-open="${b.id}">Open (${money(b.cost)})</button>` : '<span class="fact">not adjacent</span>'}</div></div>`); const ob = row.querySelector('[data-open]'); if (ob) ob.onclick = () => { if (E.openBlock(S, b.id)) { save(); render(); } else toast(!S.unlocked && Object.keys(S.open).length >= 2 ? 'A second street is as far as the free year goes.' : 'Not enough reputation or cash there yet.'); }; blocks.appendChild(row); }
+  for (const b of D.BLOCKS) { const open = S.open[b.id]; const adj = Object.keys(S.open).some(o => D.ADJ[o].includes(b.id)); const row = el(`<div class="staff"><div><b>${b.name}</b> <span class="muted small">${b.desc}</span><div class="meter"><i style="width:${S.rep[b.id]}%"></i></div><span class="small">reputation ${Math.round(S.rep[b.id])}${open ? ' · rent ' + money(b.rent) + '/wk' : ' · needs ' + b.needRep}</span></div><div>${open ? '<span class="fact good">open</span>' : adj ? `<button class="btn small" data-open="${b.id}">Open (${money(b.cost)})</button>` : '<span class="fact">not adjacent</span>'}</div></div>`); const ob = row.querySelector('[data-open]'); if (ob) ob.onclick = () => { if (E.openBlock(S, b.id)) { save(); render(); } else toast('Not enough reputation or cash there yet.'); }; blocks.appendChild(row); }
   box.appendChild(blocks);
 }
 function renderStory() {
@@ -131,14 +128,13 @@ function endWeek() {
     lines.push(`<p><b>Takings ${money(r.income)}</b> · rent and wages ${money(r.costs)} · cash now <b>${money(S.cash)}</b></p>`);
     if (S.cash < 0) lines.push(`<p class="small" style="color:var(--red)">In the red. Three weeks below −£600 and the shop closes.</p>`);
     $('week-body').innerHTML = lines.join('');
-    if (!S.ended && !S.pending && !(S.gated && !S.unlocked)) show('modal-week'); // the gate, a story beat or the ending take the stage instead
+    if (!S.ended && !S.pending) show('modal-week'); // a story beat or the ending takes the stage instead
   }
   afterTurn();
 }
 function afterTurn() {
   render();
   if (S.ended) return showEnding();
-  if (S.gated && !S.unlocked) { $('gate-note').textContent = DEV ? 'Test build: unlocking is free here.' : ''; show('modal-gate'); return; }
   if (S.pending && S.pending.ending) return showEndingChoice();
   if (S.pending) showBeat();
 }
@@ -163,22 +159,17 @@ function showEnding() {
   const st = S.stats; $('ending-stats').innerHTML = [['items mended', st.fixed], ['kept from landfill', money(st.saved)], ['streets', Object.keys(S.open).length], ['staff', S.staff.length], ['Hollow Lane', Math.round(S.rep.hollow)], ['score', E.score(S)]].map(p => `<div class="stat"><b>${p[1]}</b><span>${p[0]}</span></div>`).join('');
   $('ending-after').hidden = false; $('btn-endless').hidden = S.ended === 'bust'; show('modal-ending');
 }
-function grantUnlock(src) { profile.unlocked = true; S.unlocked = true; S.gated = false; hide('modal-gate'); save(); render(); toast(src === 'restore' ? 'Purchase restored.' : 'Years two and three are open.'); }
-async function doUnlock() { if (S.unlocked) return toast('Already unlocked.'); if (DEV) return grantUnlock('dev'); const r = await B.unlock(); if (r.ok) grantUnlock('buy'); else toast(r.reason === 'unavailable' ? 'Unlocking is available in the Google Play version.' : r.reason === 'cancelled' ? 'No purchase made.' : 'The purchase could not be completed.'); }
-async function doRestore() { const r = await B.restore(); if (r.ok) grantUnlock('restore'); else toast(r.reason === 'unavailable' ? 'Restore is available in the Google Play version.' : 'No purchase found for this Google account.'); }
 function applySettings() { document.documentElement.classList.toggle('large', profile.large); document.documentElement.classList.toggle('contrast', profile.contrast); $('opt-large').checked = profile.large; $('opt-contrast').checked = profile.contrast; }
-function newGame() { S = E.newState({ unlocked: profile.unlocked }); hide('modal-ending'); save(); setTab('counter'); afterTurn(); }
+function newGame() { S = E.newState(); hide('modal-ending'); save(); setTab('counter'); afterTurn(); }
 
 function init() {
   load(); applySettings(); $('ver').textContent = VERSION;
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
   $('btn-endweek').addEventListener('click', endWeek);
   $('btn-week-ok').addEventListener('click', () => hide('modal-week'));
-  $('btn-unlock').addEventListener('click', doUnlock); $('btn-gate-unlock').addEventListener('click', doUnlock); $('btn-restore').addEventListener('click', doRestore); $('btn-gate-restore').addEventListener('click', doRestore);
-  $('btn-gate-later').addEventListener('click', () => hide('modal-gate'));
   $('btn-endless').addEventListener('click', () => { E.goEndless(S); hide('modal-ending'); save(); afterTurn(); });
   $('btn-newgame').addEventListener('click', newGame);
-  $('btn-reset').addEventListener('click', () => { if (confirm('Start a new shop from week one? Your purchase stays; this shop does not.')) newGame(); });
+  $('btn-reset').addEventListener('click', () => { if (confirm('Start a new shop from week one? This shop will be gone.')) newGame(); });
   $('opt-large').addEventListener('change', e => { profile.large = e.target.checked; applySettings(); save(); }); $('opt-contrast').addEventListener('change', e => { profile.contrast = e.target.checked; applySettings(); save(); });
   window.addEventListener('pagehide', save);
   $('app').hidden = false; afterTurn();
@@ -188,6 +179,6 @@ window.__repairshop = { get state() { return S; }, E, D, VERSION, save, render, 
   seed(o) { for (const k of ['week', 'cash']) if (o[k] != null) S[k] = +o[k]; if (o.rep != null) S.rep.hollow = +o.rep; render(); },
   forceJob(catId, faultId) { const j = E.addJob(S, 'hollow', { cat: catId }); if (faultId) { j.fault = faultId; j.sym = E.catById[catId].faultById[faultId].sym[0]; } render(); return j; },
   forceBeat(arcId, beat) { S.pending = { arc: arcId, beat: beat | 0 }; S.arcs[arcId] = (beat | 0) + 1; afterTurn(); },
-  endWeek, unlock() { grantUnlock('dev'); }, finish(id) { S.pending = { ending: true }; E.chooseEnding(S, id || 'beloved'); showEnding(); render(); }, reset() { localStorage.removeItem(SAVE_KEY); location.reload(); } };
+  endWeek, finish(id) { S.pending = { ending: true }; E.chooseEnding(S, id || 'beloved'); showEnding(); render(); }, reset() { localStorage.removeItem(SAVE_KEY); location.reload(); } };
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

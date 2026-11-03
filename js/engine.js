@@ -28,7 +28,7 @@ function newState(opts) {
     rep: { hollow: 25, market: 10, estate: 10, station: 5, hill: 5 }, open: { hollow: true }, benches: 2, cats: { kettle: true, lamp: true },
     staff: [], inventory: {}, orders: [], jobs: [], arcs: {}, flags: {}, log: [], hoursUsed: 0, debtWeeks: 0,
     stats: { fixed: 0, failed: 0, declined: 0, late: 0, returns: 0, earned: 0, spent: 0, saved: 0 },
-    unlocked: !!opts.unlocked, gated: false, ended: null, endless: false, pending: null, week_log: [] };
+    unlocked: true, ended: null, endless: false, pending: null, week_log: [] };
   const owner = { id: s.nextId++, name: 'You', role: 'owner', skills: {}, xp: 0 }; for (const c of D.CATEGORIES) owner.skills[c.id] = c.id === 'kettle' || c.id === 'lamp' ? 2 : 1;
   s.staff.push(owner);
   for (const p of ['fuse', 'cord', 'switch', 'element', 'bulbholder']) s.inventory[p] = 2;
@@ -115,7 +115,7 @@ function fire(s, staffId) { const i = s.staff.findIndex(x => x.id === staffId &&
 function train(s, staffId, catId) { const st = s.staff.find(x => x.id === staffId); if (!st || !catById[catId] || !s.cats[catId]) return false; if (st.skills[catId] >= 5 || s.cash < TRAIN_COST) return false; s.cash -= TRAIN_COST; s.stats.spent += TRAIN_COST; st.skills[catId]++; return true; }
 function buyBench(s) { const cost = BENCH_COST * s.benches; if (s.cash < cost || s.benches >= 8) return false; s.cash -= cost; s.stats.spent += cost; s.benches++; log(s, `Bench ${s.benches} built. More elbow room, more elbows.`); return true; }
 function unlockCat(s, catId) { const c = catById[catId]; if (!c || s.cats[catId] || s.cash < c.unlockCost) return false; s.cash -= c.unlockCost; s.stats.spent += c.unlockCost; s.cats[catId] = true; log(s, `${c.name} repairs: manuals bought, tools on the wall.`); return true; }
-function openBlock(s, blockId) { const b = blockById[blockId]; if (!b || s.open[blockId]) return false; if (!s.unlocked && year(s) >= 1 && Object.keys(s.open).length >= 2) return false; if (s.rep[blockId] < b.needRep || s.cash < b.cost) return false; const adj = Object.keys(s.open).some(o => D.ADJ[o].includes(blockId)); if (!adj) return false; s.cash -= b.cost; s.stats.spent += b.cost; s.open[blockId] = true; log(s, `Opened a counter on ${b.name}.`, 'story'); return true; }
+function openBlock(s, blockId) { const b = blockById[blockId]; if (!b || s.open[blockId]) return false; if (s.rep[blockId] < b.needRep || s.cash < b.cost) return false; const adj = Object.keys(s.open).some(o => D.ADJ[o].includes(blockId)); if (!adj) return false; s.cash -= b.cost; s.stats.spent += b.cost; s.open[blockId] = true; log(s, `Opened a counter on ${b.name}.`, 'story'); return true; }
 function skillMult(st, catId) { const k = st.skills[catId] | 0; return 1.7 - 0.2 * k; }
 function assign(s, jobId, staffId, mode) { const j = s.jobs.find(x => x.id === jobId); const st = s.staff.find(x => x.id === staffId); if (!j || !st || (j.status !== 'queued' && j.status !== 'working')) return false; if (st.role === 'front') return false; const busy = s.jobs.filter(x => x.assigned === staffId && x.id !== jobId && x.status === 'working'); if (busy.length >= 8) return false; j.assigned = staffId; if (mode) j.mode = mode === 'quick' ? 'quick' : 'careful'; if (j.status === 'queued') j.status = 'working'; return true; }
 function backlogHours(s) { let h = 0; for (const j of s.jobs) if (j.status === 'queued' || j.status === 'working') h += j.hoursLeft; return h; }
@@ -158,7 +158,6 @@ function endWeek(s) {
   if (s.debtWeeks >= 3) { s.ended = 'bust'; log(s, D.ENDINGS.bust.text, 'ending'); return r; }
   // next week
   s.week++; s.hoursUsed = 0;
-  if (!s.unlocked && s.week > D.FREE_WEEKS) { s.week = D.FREE_WEEKS; s.gated = true; log(s, 'The first year ends here. Years two and three, the other streets, and the ending are the unlock.', 'story'); return r; }
   if (s.week > D.CAMPAIGN_WEEKS && !s.endless) { s.week = D.CAMPAIGN_WEEKS; s.pending = { ending: true }; return r; }
   if (s.week % D.WEEKS_PER_YEAR === 1 && s.week > 1) log(s, `Year ${year(s)} begins. Cash £${Math.round(s.cash)}, reputation on Hollow Lane ${Math.round(s.rep.hollow)}.`, 'story');
   spawnCustomers(s);
@@ -227,10 +226,12 @@ function validateDiagnosis() {
 }
 
 /* ---------- save hygiene ---------- */
+// Older builds wrote a year-one stop line to the log; saves from them load without it.
+const RETIRED_LOG = 'The first year ends here.';
 const num = (v, def, lo, hi) => { v = +v; if (!isFinite(v)) v = def; return clamp(v, lo, hi); };
 function sanitize(raw) {
   if (!raw || typeof raw !== 'object') return null;
-  const s = newState({ seed: raw.seed, unlocked: raw.unlocked }); s.jobs = []; s.log = []; s.arcs = {}; s.flags = {}; s.staff = []; s.inventory = {}; s.orders = []; s.open = {}; s.cats = {};
+  const s = newState({ seed: raw.seed }); s.jobs = []; s.log = []; s.arcs = {}; s.flags = {}; s.staff = []; s.inventory = {}; s.orders = []; s.open = {}; s.cats = {};
   s.week = Math.round(num(raw.week, 1, 1, 100000)); s.cash = num(raw.cash, START_CASH, -1e6, 1e9); s.nextId = Math.round(num(raw.nextId, 1, 1, 1e9)); s.benches = Math.round(num(raw.benches, 2, 1, 8));
   s.hoursUsed = num(raw.hoursUsed, 0, 0, 200); s.debtWeeks = Math.round(num(raw.debtWeeks, 0, 0, 3));
   for (const b of D.BLOCKS) s.rep[b.id] = num(raw.rep && raw.rep[b.id], b.id === 'hollow' ? 25 : 10, 0, 100);
@@ -253,8 +254,8 @@ function sanitize(raw) {
   if (raw.arcs) for (const a in raw.arcs) if (arcById[a]) s.arcs[a] = Math.round(num(raw.arcs[a], 0, 0, 3));
   if (raw.flags) for (const f in raw.flags) if (raw.flags[f]) s.flags[String(f).slice(0, 32)] = true;
   for (const k in s.stats) s.stats[k] = Math.round(num(raw.stats && raw.stats[k], 0, 0, 1e9));
-  if (Array.isArray(raw.log)) s.log = raw.log.filter(l => l && typeof l.t === 'string').slice(-LOG_CAP).map(l => ({ w: Math.round(num(l.w, 1, 1, 1e6)), t: String(l.t).slice(0, 500), k: typeof l.k === 'string' ? l.k.slice(0, 10) : 'note' }));
-  s.unlocked = raw.unlocked === true; s.gated = raw.gated === true && !s.unlocked; s.endless = raw.endless === true;
+  if (Array.isArray(raw.log)) s.log = raw.log.filter(l => l && typeof l.t === 'string' && !l.t.startsWith(RETIRED_LOG)).slice(-LOG_CAP).map(l => ({ w: Math.round(num(l.w, 1, 1, 1e6)), t: String(l.t).slice(0, 500), k: typeof l.k === 'string' ? l.k.slice(0, 10) : 'note' }));
+  s.unlocked = true; s.endless = raw.endless === true; // every save, old or new, opens the whole campaign
   s.ended = ['beloved', 'empire', 'bust'].includes(raw.ended) ? raw.ended : null;
   if (raw.pending && typeof raw.pending === 'object') { if (raw.pending.ending) s.pending = { ending: true }; else if (arcById[raw.pending.arc] && arcById[raw.pending.arc].beats[raw.pending.beat | 0]) s.pending = { arc: raw.pending.arc, beat: raw.pending.beat | 0 }; }
   if (!s.log.length) log(s, 'The shop, again.', 'story');
