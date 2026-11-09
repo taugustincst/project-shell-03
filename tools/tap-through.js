@@ -124,13 +124,20 @@ async function measureSettled(sel) {
   }
   return m;
 }
+// Two taps close together in time and place read as a double tap, and the
+// WebView swallows the second one (CI saw a setting toggled on and the next
+// tap on it lost), so a tap near the last one waits until it cannot be.
+let lastTap = { t: 0, x: -1e9, y: -1e9 };
 async function tap(sel, label) {
   await sleep(150);
   const m = await measureSettled(sel);
   if (m.missing) return check(`${label}: on screen`, false, `${sel} not in the page`);
   if (!check(`${label}: visible and not covered`, m.visible && m.onTop, JSON.stringify(m))) return false;
   const [x, y] = toScreen(m.cx, m.cy);
+  const gap = Date.now() - lastTap.t;
+  if (gap < 900 && Math.hypot(x - lastTap.x, y - lastTap.y) < 300 * dpr) await sleep(900 - gap);
   adb('shell', 'input', 'tap', String(x), String(y));
+  lastTap = { t: Date.now(), x, y };
   return true;
 }
 async function longPress(sel, ms) {
