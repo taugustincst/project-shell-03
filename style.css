@@ -49,3 +49,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 0.9rem; } table
 .sheet-date { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; } .sheet h2 { margin: 4px 0 8px; font-size: 1.25rem; }
 .choices { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; } .choice { text-align: left; min-height: 48px; }
 .toast { position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--accent); padding: 10px 16px; border-radius: 12px; z-index: 30; font-size: 0.9rem; max-width: 90%; }
+
+.note { background: var(--panel-2); border-left: 3px solid var(--accent); padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; }
+.unlock-list { margin: 8px 0 8px 18px; padding: 0; font-size: 0.9rem; }
+.unlock-list li { margin: 4px 0; }
