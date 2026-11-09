@@ -67,7 +67,11 @@ async function js(expression) {
   return m.result.result.value;
 }
 async function connect() {
-  for (let i = 0; i < 40; i++) {
+  // A freshly booted CI emulator can take well over a minute to bring up the
+  // first WebView, so wait longer, and open the app again once in case its
+  // first launch was lost while the phone was still settling.
+  for (let i = 0; i < 100; i++) {
+    if (i === 50) { try { adb('shell', 'monkey', '-p', PKG, '-c', 'android.intent.category.LAUNCHER', '1'); } catch (e) { /* try on */ } }
     let pid = '';
     try { pid = adb('shell', 'pidof', PKG); } catch (e) { /* not up yet */ }
     if (pid) {
@@ -139,6 +143,16 @@ async function tap(sel, label) {
   adb('shell', 'input', 'tap', String(x), String(y));
   lastTap = { t: Date.now(), x, y };
   return true;
+}
+// A setting toggle can lose a tap to the WebView (it read two taps on the
+// same spot as a double tap in CI), so a toggle whose page state did not
+// change is tapped once more after a pause.
+async function tapToggle(sel, label, cond) {
+  await tap(sel, label);
+  if (await waitFor(cond, 2500)) return true;
+  await sleep(1200);
+  await tap(sel, label + ' (once more)');
+  return waitFor(cond);
 }
 async function longPress(sel, ms) {
   const m = await measureSettled(sel);
@@ -299,10 +313,8 @@ const tabOpen = t => `document.getElementById('tab-${t}').classList.contains('ac
     check(`the ${t} tab opens`, await waitFor(tabOpen(t)));
   }
   check('Story offers the full game', await waitFor(`/years two and three/.test(document.getElementById('unlock-card').textContent)`));
-  await tap('#opt-large', 'Large text');
-  check('Large text turns on', await waitFor(`document.documentElement.classList.contains('large')`));
-  await tap('#opt-large', 'Large text again');
-  check('Large text turns off', await waitFor(`!document.documentElement.classList.contains('large')`));
+  check('Large text turns on', await tapToggle('#opt-large', 'Large text', `document.documentElement.classList.contains('large')`));
+  check('Large text turns off', await tapToggle('#opt-large', 'Large text again', `!document.documentElement.classList.contains('large')`));
   await tap('.tab[data-tab="counter"]', 'Counter tab');
 
   // 9. Back leaves without a crash, and the shop is there on relaunch.
