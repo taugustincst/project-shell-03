@@ -1,3 +1,3 @@
-{ "name": "mended", "version": "1.0.0", "private": true, "description": "Mended: a repair-shop management game packaged for Google Play.",
-  "scripts": { "test": "node tests/engine.test.js && node tests/smoke.js", "sim": "node sim/sim.js all 7 20", "icons": "node tools/make-icons.js" },
+{ "name": "mended", "version": "1.1.0", "private": true, "description": "Mended: a repair-shop management game packaged for Google Play.",
+  "scripts": { "test": "node tests/engine.test.js && node tests/smoke.js", "sim": "node sim/sim.js all 7 20", "balance": "node sim/sim.js check 7 30 && node sim/sim.js check 1000 30", "tap-through": "node tools/tap-through.js", "icons": "node tools/make-icons.js" },
   "devDependencies": { "playwright": "^1.50.0" } }

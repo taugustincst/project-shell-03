@@ -32,12 +32,13 @@
     <section id="tab-story" class="panel">
       <div id="story-stats" class="stats"></div>
       <ol id="log" class="log"></ol>
+      <div class="card" id="unlock-card"></div>
       <div class="card">
         <h2>Settings</h2>
         <label class="row"><input type="checkbox" id="opt-large"> Large text</label>
         <label class="row"><input type="checkbox" id="opt-contrast"> High contrast</label>
         <div class="row-btns"><button class="btn danger" id="btn-reset">Start again</button></div>
-        <p class="muted small">Progress is saved on this device. Nothing leaves it. <a href="privacy.html">Privacy</a> · © AugustInnovations LLC · v<span id="ver">1.0.0</span></p>
+        <p class="muted small">Progress is saved on this device. Nothing leaves it. <a href="privacy.html">Privacy</a> · © AugustInnovations LLC · v<span id="ver">1.1.0</span></p>
       </div>
     </section>
   </main>
@@ -47,9 +48,19 @@
 <div class="modal" id="modal-story" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="sheet-date" id="story-date"></div><h2 id="story-title"></h2><p id="story-text"></p><div class="choices" id="story-choices"></div></div></div>
 <div class="modal" id="modal-week" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="sheet-date" id="week-date"></div><h2>The week's ledger</h2><div id="week-body"></div><button class="btn primary" id="btn-week-ok">Open up</button></div></div>
 <div class="modal" id="modal-ending" hidden role="dialog" aria-modal="true"><div class="sheet"><div class="sheet-date" id="ending-date">Week 156</div><h2 id="ending-title">What did you become?</h2><p id="ending-text"></p><div id="ending-choices" class="choices"></div><div id="ending-stats" class="stats"></div><div class="row-btns" id="ending-after" hidden><button class="btn primary" id="btn-endless">Keep the shop open (endless)</button><button class="btn" id="btn-newgame">Start a new shop</button></div></div></div>
+<div class="modal" id="modal-unlock" hidden role="dialog" aria-modal="true"><div class="sheet">
+  <div class="sheet-date" id="u-sub">The full game</div><h2>Keep the shop open</h2>
+  <p>Your first year on Hollow Lane is free, with two streets. The full game adds:</p>
+  <ul class="unlock-list"><li>Years two and three, with rent rises, raises for your staff and the VAT man</li><li>All five streets, up to Orchard Hill</li><li>How all thirteen stories end, and the investor who comes calling</li><li>Both endings, the shop on Hollow Lane or FixEmpire, then endless mode for as long as you like</li></ul>
+  <p class="muted">One purchase through Google Play. No ads and nothing else to buy. Your shop carries on from where you left it.</p>
+  <p class="note" id="u-note" hidden></p>
+  <button class="btn primary" id="u-buy">Unlock the full game</button>
+  <div class="row-btns"><button class="btn" id="u-restore">Restore purchase</button><button class="btn" id="u-later">Not now</button></div>
+</div></div>
 <div id="toast" class="toast" hidden></div>
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/billing.js"></script>
 <script src="js/game.js"></script>
 </body>
 </html>

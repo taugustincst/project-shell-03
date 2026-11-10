@@ -1,12 +1,12 @@
-# Mended (working title) — Google Play listing draft, not submitted
+# Mended — Google Play listing draft, not submitted
 
-Rules: short description is features only, never price or promo wording. Captions state content. Submission only on Tj's approval. Title is FOR TJ.
+Rules: short description is features only, never price or promo wording. Captions state content. Submission only on Tj's approval. The title Mended is confirmed (3 Nov).
 
 ## Title (30)
 Mended: Repair Shop
 
-## Short description (80)
-Run your own repair shop. Diagnose, quote, order parts, and build a street's trust.
+## Short description (80 of 80)
+Run your own repair shop. Diagnose, quote, order parts and win a street's trust.
 
 ## Full description
 **Run your own repair shop.** You inherit a one-bench repair café on Hollow Lane in a throwaway age. Every kettle, radio, bike, console, phone and sewing machine that comes through the door is a small vote against the landfill.
@@ -22,15 +22,15 @@ Run your own repair shop. Diagnose, quote, order parts, and build a street's tru
 - No ads. No timers. No accounts. No consumables. Fully offline.
 - Turn-based: a week at a time, as long or short as you like.
 - Portrait, one-handed, large-text and high-contrast options.
-- The whole three-year campaign, every street and both endings, plus endless mode.
+- Your first year on Hollow Lane is free, with two streets and the start of every story. One purchase unlocks years two and three, all five streets, the endings and endless mode.
 
 ## Screenshot captions
 1. Diagnose: choose the tests, name the fault
 2. 8 trades · 79 faults · 3 suppliers
 3. Quote against replacement, build a street's trust
-4. Three years, thirteen story customers, two endings
+4. Three years, thirteen story customers, three endings
 
 ## Category: Game · Simulation. Tags: tycoon, management, repair, cozy, offline.
-## Declarations: IARC (no violence, no gambling, in-app purchases: no); audience 13+; data safety: see the Data safety line below; privacy.html on Pages; contact elderon@augustinnovations.io.
-- Price: paid download, suggested $4.99 (set in Play Console)
-- Data safety: no data collected, no data shared, no network access; progress stays on the device.
+## Declarations: IARC (no violence, no gambling, in-app purchases: yes); audience 13+; data safety: see the Data safety line below; privacy.html on Pages; contact elderon@augustinnovations.io.
+- Price: free to install. One in-app product, `full_unlock`, $4.99 (set in Play Console), unlocks years two and three, all five streets, the endings and endless mode.
+- Data safety: no data collected, no data shared; progress stays on the device. The purchase is handled by Google Play.

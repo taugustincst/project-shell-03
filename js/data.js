@@ -1,7 +1,7 @@
 /* Mended (working title) — content tables. Pure data: categories, faults, tests, parts, suppliers, staff, blocks, story arcs, endings. */
 (function (root) {
 'use strict';
-const WEEKS_PER_YEAR = 52, CAMPAIGN_WEEKS = 156;
+const WEEKS_PER_YEAR = 52, CAMPAIGN_WEEKS = 156, FREE_WEEKS = 52, FREE_STREETS = 2; // the free first year: Hollow Lane and one more street
 
 /* Parts: price at the standard supplier. */
 const PARTS = {
@@ -217,6 +217,6 @@ const ENDINGS = {
   bust: { title: 'Closing Time', text: 'The numbers were numbers. The landlord was sorry, which helped nobody. The tools went to the repair club at the school, and the bench went to the estate, and somebody will fix a kettle on it this week. The street keeps the sign.' }
 };
 
-const DATA = { WEEKS_PER_YEAR, CAMPAIGN_WEEKS, PARTS, CATEGORIES, SUPPLIERS, ROLES, STAFF_NAMES, BLOCKS, ADJ, CUSTOMER_NAMES, ITEM_NAMES, ARCS, ENDINGS };
+const DATA = { WEEKS_PER_YEAR, CAMPAIGN_WEEKS, FREE_WEEKS, FREE_STREETS, PARTS, CATEGORIES, SUPPLIERS, ROLES, STAFF_NAMES, BLOCKS, ADJ, CUSTOMER_NAMES, ITEM_NAMES, ARCS, ENDINGS };
 if (typeof module !== 'undefined' && module.exports) module.exports = DATA; else root.REPAIR_DATA = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
