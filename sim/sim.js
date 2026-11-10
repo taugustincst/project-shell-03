@@ -5,6 +5,9 @@ const STRATS = {
   careful: { tests: 3, priceFrac: j => 0.5 + 0.4 * j.attach, mode: 'careful', weeks: 2, invest: true, supplier: 'std' },
   // One test then a guess, high prices, quick fixes, rush parts. The impatient player.
   hasty: { tests: 1, priceFrac: j => 0.75 + 0.3 * j.attach, mode: 'quick', weeks: 1, invest: true, supplier: 'rush' },
+  // The middle player: two tests then the likeliest fault, a fair price, careful fixes on things people love and quick ones
+  // on the rest, standard parts. Folder's 2026-11-09 review asked whether this player is viable or whether only careful is.
+  mixed: { tests: 2, priceFrac: j => 0.6 + 0.35 * j.attach, mode: j => j.attach >= 0.5 ? 'careful' : 'quick', weeks: 2, invest: true, supplier: 'std' },
   // Careful for two years, then coasts like the hasty player. Shows that reputation can still be lost late.
   coast: { tests: 3, priceFrac: j => 0.5 + 0.4 * j.attach, mode: 'careful', weeks: 2, invest: true, supplier: 'std', coastFrom: 105 },
   // Thorough but undercharges and never hires.
@@ -30,7 +33,7 @@ function play(name, seed, maxWeeks) {
     if (S.supplier) { const need = E.partsNeeded(s); for (const p in need) { const have = (s.inventory[p] | 0) + s.orders.filter(o => o.part === p).reduce((a, o) => a + o.qty, 0); if (have < need[p]) E.order(s, S.supplier, p, need[p] - have + (S.invest ? 1 : 0)); } }
     // assign: least busy bench staff
     const bench = s.staff.filter(x => x.role !== 'front');
-    for (const j of s.jobs.filter(j => j.status === 'queued')) { const st = bench.map(x => [x, s.jobs.filter(y => y.assigned === x.id && y.status === 'working').length]).sort((a, b) => a[1] - b[1])[0]; if (st && st[1] < 8) E.assign(s, j.id, st[0].id, S.mode); }
+    for (const j of s.jobs.filter(j => j.status === 'queued')) { const st = bench.map(x => [x, s.jobs.filter(y => y.assigned === x.id && y.status === 'working').length]).sort((a, b) => a[1] - b[1])[0]; if (st && st[1] < 8) E.assign(s, j.id, st[0].id, typeof S.mode === 'function' ? S.mode(j) : S.mode); }
     // invest
     if (S.invest) {
       // hire only while the last six weeks' takings cover the wage bill with room for one more
@@ -64,7 +67,9 @@ if (which === 'check') {
     ['year one is beatable: careful survives it in at least 80% of runs', c.bustYear1 <= runs * 0.2],
     ['year one is losable: undercharging and neglect go bust in it', R.cheap.bustYear1 >= runs * 0.9 && R.neglect.bustYear1 >= runs * 0.9],
     ['the last year has money tension: careful ends in the low tens of thousands', c.cashEnd >= 8000 && c.cashEnd <= 60000],
-    ['reputation can still be lost late: coasting from week 105 ends at least 8 lower', R.coast.rep <= c.rep - 8]
+    ['reputation can still be lost late: coasting from week 105 ends at least 8 lower', R.coast.rep <= c.rep - 8],
+    ['a middle player is viable: mixed reaches an ending other than bust in at least 70% of runs', (R.mixed.runs - (R.mixed.ends.bust | 0)) >= R.mixed.runs * 0.7],
+    ['care still pays: careful beats mixed on end cash and reputation', c.cashEnd > R.mixed.cashEnd && c.rep >= R.mixed.rep]
   ];
   for (const [g, ok] of gates) console.log(`${ok ? 'PASS' : 'FAIL'} ${g}`);
   process.exitCode = gates.every(g => g[1]) ? 0 : 2;
