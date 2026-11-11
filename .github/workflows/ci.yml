@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: 22
       - run: node tests/engine.test.js
+      - run: node tests/colour.test.js
       - name: Balance check (careful beats hasty, year one beatable and losable, late-game money tension)
         run: |
           node sim/sim.js check 7 30
