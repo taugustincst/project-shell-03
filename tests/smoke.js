@@ -55,6 +55,8 @@ const fresh = async (b, init, arg) => { const ctx = await b.newContext({ viewpor
   check('held, the end-week button reopens the sheet instead of a week', (await p.textContent('#btn-endweek')) === 'Start year two' && (await p.click('#btn-endweek'), await p.isVisible('#modal-unlock')) && (await T(p, () => window.__repairshop.state.week)) === 52);
   await p.click('#u-later'); await p.click('.tab[data-tab="story"]');
   check('the Story tab has a full-game card', (await p.textContent('#unlock-card')).includes('years two and three'));
+  { const rows = await p.$$eval('#more-list a', as => as.map(a => ({ href: a.href, t: a.textContent, img: a.querySelector('img').naturalWidth }))); check('the Story tab lists the other live games with icon and Play link', await p.isVisible('#more-card') && rows.length >= 2 && rows.every(r => r.href.startsWith('https://play.google.com/store/apps/details?id=com.taugustincst.') && !r.href.endsWith('.mended') && r.img > 0 && !/[$£€]/.test(r.t)), JSON.stringify(rows.map(r => r.href.split('.').pop()))); }
+  check('no other games are shown at the counter or bench', (await p.locator('#tab-counter .more-row, #tab-bench .more-row').count()) === 0);
   check('a save never carries the unlock', await T(p, () => { window.__repairshop.save(); const raw = JSON.parse(localStorage.getItem('mended.v1')); return raw.run.unlocked === false && !('owned' in raw); }));
   // save round trip
   const before = await T(p, () => { const K = window.__repairshop; K.save(); return [K.state.week, Math.round(K.state.cash), K.state.flags.okafor_job]; });
