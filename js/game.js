@@ -2,7 +2,7 @@
 (function () {
 'use strict';
 const E = window.REPAIR, D = E.D;
-const VERSION = '1.1.0', SAVE_KEY = 'mended.v1', BACKUP_KEY = 'mended.v1.backup';
+const VERSION = '1.1.1', SAVE_KEY = 'mended.v1', BACKUP_KEY = 'mended.v1.backup';
 const $ = id => document.getElementById(id);
 let S = null, profile = null, tab = 'counter', lastLog = 0, unread = 0;
 /* The one-time unlock (Google Play in the Play edition, see js/billing.js). The first year and two streets are free.
@@ -210,6 +210,8 @@ function newGame() { S = E.newState(); hide('modal-ending'); save(); setTab('cou
 
 function init() {
   load(); applySettings(); $('ver').textContent = VERSION;
+  // More from AugustInnovations sits under settings in the Story tab, never at the counter or bench.
+  $('more-card').hidden = !(window.MoreGames && window.MoreGames.render($('more-list'), 'mended'));
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
   $('btn-endweek').addEventListener('click', endWeek);
   $('btn-week-ok').addEventListener('click', () => { hide('modal-week'); if (E.atGate(S)) showUnlock('gate'); });
