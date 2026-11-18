@@ -2,7 +2,7 @@
 (function () {
 'use strict';
 const E = window.REPAIR, D = E.D;
-const VERSION = '1.1.1', SAVE_KEY = 'mended.v1', BACKUP_KEY = 'mended.v1.backup';
+const VERSION = '1.1.2', SAVE_KEY = 'mended.v1', BACKUP_KEY = 'mended.v1.backup';
 const $ = id => document.getElementById(id);
 let S = null, profile = null, tab = 'counter', lastLog = 0, unread = 0;
 /* The one-time unlock (Google Play in the Play edition, see js/billing.js). The first year and two streets are free.
